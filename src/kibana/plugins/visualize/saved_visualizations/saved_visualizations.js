@@ -24,7 +24,7 @@ define(function (require) {
     };
 
     this.urlFor = function (id) {
-      return kbnUrl.eval('#/visualize/edit/{{id}}', {id: id});
+      return kbnUrl.eval('#/visualize/editdsds/{{id}}', {id: id});
     };
 
     this.delete = function (ids) {
@@ -32,6 +32,26 @@ define(function (require) {
       return Promise.map(ids, function (id) {
         return (new SavedVis(id)).delete();
       });
+    };
+
+    this.buildPanel = function (data, time) {
+      panel = {};
+      panel.description = "";
+      panel.icon = "fa-plug";
+      panel.id = "sample-Visualization-" + data.title + "-"+ data.id + "-" + new Date(time.from).getTime() + "-" + new Date(time.to).getTime();
+      panel.savedSearchId= "grafana";
+      panel.title = data.title;
+      panel.type = { 
+        description: "Grafana export",
+        hierarchicalData: false,
+        icon: "fa-plug",
+        name: "area",
+        title: "Chart",
+        url: "http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + data.id + "&fullscreen&from=" + new Date(time.from).getTime() + "&to=" + new Date(time.to).getTime(),
+        version: 1,
+        visState: '{}'
+      };
+      return panel;
     };
 
     this.find = function (searchString) {
@@ -52,9 +72,9 @@ define(function (require) {
         size: 100,
       })
       .then(function (resp) {
-        return {
-          total: resp.hits.total,
-          hits: _.transform(resp.hits.hits, function (hits, hit) {
+        var t = {};
+        t.total = resp.hits.total;
+        t.hits = _.transform(resp.hits.hits, function (hits, hit) {
             var source = hit._source;
             source.id = hit._id;
             source.url = self.urlFor(hit._id);
@@ -72,9 +92,33 @@ define(function (require) {
 
             source.type = visTypes.byName[typeName];
             source.icon = source.type.icon;
+            source.type.description ="po cmeme";
             hits.push(source);
-          }, [])
-        };
+        }, []);
+        
+        var grafanaEls = [];
+
+        es.search({
+          index: "grafana-dash",
+          type: "dashboard",
+          body: body,
+          size: 100,
+        })
+        .then(function (resp) {
+          var grafanaDashboard = JSON.parse(resp.hits.hits[0]._source.dashboard);
+          _.forEach(grafanaDashboard.rows, function(row) {
+            _.forEach(row.panels, function(panel) {
+              if (panel.title) {
+                grafanaEls.push(self.buildPanel(panel, grafanaDashboard.time));
+              }
+            });
+          });
+          t.total += grafanaEls.length;
+          _.forEach(grafanaEls, function(gPanel) {
+            t.hits.push(gPanel);
+          });
+        });
+        return t;
       });
     };
   });

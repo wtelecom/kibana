@@ -2,7 +2,7 @@
   <div class="panel-heading">
     <span class="panel-title">{{savedObj.title}}</span>
     <div class="btn-group">
-      <a ng-show="!appEmbedded" ng-href="{{edit}}/{{panel.id | uriescape}}"><i class="fa fa-pencil"></i></a>
+      <a ng-show="!appEmbedded" ng-href="{{edit}}/{{panel.id | uriescape}}"><i ng-show="!savedObj.url" class="fa fa-pencil"></i></a>
       <a ng-show="!appEmbedded" ng-click="remove()"><i class="fa fa-times"></i></a>
     </div>
     <div class="clearfix"></div>
@@ -13,7 +13,9 @@
     <span ng-bind="error"></span>
   </div>
 
-  <visualize ng-switch-when="visualization"
+  <iframe ng-src="{{savedObj.url}}" ng-if="savedObj.url" style="width: 100%; height: 100%; border: 0;"></iframe>
+  
+  <visualize ng-if="!savedObj.url" ng-switch-when="visualization"
     vis="savedObj.vis"
     search-source="savedObj.searchSource"
     class="panel-content">

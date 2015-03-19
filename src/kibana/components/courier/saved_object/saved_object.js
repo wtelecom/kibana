@@ -1,5 +1,5 @@
 define(function (require) {
-  return function SavedObjectFactory(es, configFile, Promise, Private, Notifier, indexPatterns) {
+  return function SavedObjectFactory(es, configFile, Promise, Private, Notifier, indexPatterns, $sce) {
     var angular = require('angular');
     var errors = require('errors');
     var _ = require('lodash');
@@ -14,6 +14,11 @@ define(function (require) {
 
       // save an easy reference to this
       var self = this;
+      var grafana = {
+        current: false,
+        url: null,
+        title: "",
+      };
 
       /************
        * Initialize config vars
@@ -42,7 +47,18 @@ define(function (require) {
       self.searchSource = config.searchSource && new SearchSource();
 
       // the id of the document
-      self.id = config.id || void 0;
+      if (config.id && type == "visualization") {
+        if (config.id.split('-').length > 2) {
+          self.id = config.id.split('-')[0] + "-" + config.id.split('-')[1];
+          grafana.current = true;
+          grafana.title = config.id.split('-')[2]
+          grafana.url = $sce.trustAsResourceUrl("http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + config.id.split('-')[3] + "&fullscreen&from=" + config.id.split('-')[4] + "&to=" + config.id.split('-')[5]);
+        } else {
+          self.id = config.id || void 0;
+        }
+      } else {
+        self.id = config.id || void 0;
+      }
 
       /**
        * Asynchronously initialize this object - will only run
@@ -149,6 +165,10 @@ define(function (require) {
         })
         .then(function () {
           // return our obj as the result of init()
+          if (grafana.current) {
+            self.url = grafana.url;
+            self.title = grafana.title;
+          }
           return self;
         });
       });

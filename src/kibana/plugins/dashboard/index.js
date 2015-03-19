@@ -87,6 +87,7 @@ define(function (require) {
 
         timefilter.enabled = true;
         $scope.timefilter = timefilter;
+        console.log("TIMEFILTER UPDATED");
         $scope.$listen(timefilter, 'update', $scope.refresh);
 
         courier.setRootSearchSource(dash.searchSource);
