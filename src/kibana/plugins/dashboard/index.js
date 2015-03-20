@@ -18,6 +18,8 @@ define(function (require) {
   require('plugins/dashboard/services/saved_dashboards');
   require('css!plugins/dashboard/styles/main.css');
 
+  require('plugins/grafana/services/update_dashboards');
+
   var app = require('modules').get('app/dashboard', [
     'elasticsearch',
     'ngRoute',
@@ -48,7 +50,7 @@ define(function (require) {
     }
   });
 
-  app.directive('dashboardApp', function (Notifier, courier, AppState, timefilter, kbnUrl) {
+  app.directive('dashboardApp', function (Notifier, courier, AppState, timefilter, kbnUrl, updateDashboards) {
     return {
       controller: function ($scope, $route, $routeParams, $location, configFile, Private) {
         var notify = new Notifier({
@@ -87,8 +89,10 @@ define(function (require) {
 
         timefilter.enabled = true;
         $scope.timefilter = timefilter;
-        console.log("TIMEFILTER UPDATED");
         $scope.$listen(timefilter, 'update', $scope.refresh);
+        $scope.$listen(timefilter, 'update', function(){
+          updateDashboards.updateGrafanaDash($scope.timefilter);
+        });
 
         courier.setRootSearchSource(dash.searchSource);
 
