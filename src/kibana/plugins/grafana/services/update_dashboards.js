@@ -4,17 +4,9 @@ define(function (require) {
 
   module.service('updateDashboards', function (config, es, $window) {
 
-    this.find = function (searchString) {
+    this.find = function (timefilter) {
       var self = this;
-      var body = searchString ? {
-          query: {
-            simple_query_string: {
-              query: searchString + '*',
-              fields: ['dashboard'],
-              default_operator: 'AND'
-            }
-          }
-        }: { query: {match_all: {}}};
+      var body = { query: {match_all: {}}};
       return es.search({
         index: 'grafana-dash',
         type: 'dashboard',
@@ -22,23 +14,36 @@ define(function (require) {
         size: 100
       })
       .then(function (resp) {
-        console.log(resp);
-        // return {
-        //   total: resp.hits.total,
-        //   hits: resp.hits.hits.map(function (hit) {
-        //     var source = hit._source;
-        //     source.id = hit._id;
-        //     source.url = self.urlFor(hit._id);
-        //     return source;
-        //   })
-        // };
+        var dash = _.filter(resp.hits.hits, function(grafanaEl) {
+          // TODO: Set this elements in a proper way in the config file
+          if (grafanaEl._index == "grafana-dash" && grafanaEl._type == "dashboard" && grafanaEl._id == "grafana") {
+            return true;
+          }
+          return false;  
+        });
+
+        var dashboardData = JSON.parse(dash[0]._source.dashboard)
+        dashboardData.time.from = timefilter.from;
+        dashboardData.time.from = timefilter.to;
+
+        return es.update({
+          index: 'grafana-dash',
+          type: 'dashboard',
+          id: 'grafana',
+          body: {
+            doc: {
+              dashboard: JSON.stringify(dashboardData)
+            }
+          }
+        })
+        .then(function (resp) {
+          $window.location.reload();
+        });
       }); 
     };
 
     this.updateGrafanaDash = function (timefilter) {
-      console.log(timefilter);
-      this.find({_id:"grafana"});
-      // $window.location.reload();
+      this.find(timefilter);
     };
   });
 });

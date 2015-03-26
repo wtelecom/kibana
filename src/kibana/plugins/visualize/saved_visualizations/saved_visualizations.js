@@ -34,11 +34,11 @@ define(function (require) {
       });
     };
 
-    this.buildPanel = function (data, time) {
+    this.buildPanel = function (data, time, sample) {
       panel = {};
       panel.description = "";
       panel.icon = "fa-plug";
-      panel.id = "sample-Visualization-" + data.title + "-"+ data.id + "-" + new Date(time.from).getTime() + "-" + new Date(time.to).getTime();
+      panel.id = sample + "|" + data.title + "|"+ data.id;
       panel.savedSearchId= "grafana";
       panel.title = data.title;
       panel.type = { 
@@ -47,7 +47,6 @@ define(function (require) {
         icon: "fa-plug",
         name: "area",
         title: "Chart",
-        url: "http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + data.id + "&fullscreen&from=" + new Date(time.from).getTime() + "&to=" + new Date(time.to).getTime(),
         version: 1,
         visState: '{}'
       };
@@ -109,7 +108,7 @@ define(function (require) {
           _.forEach(grafanaDashboard.rows, function(row) {
             _.forEach(row.panels, function(panel) {
               if (panel.title) {
-                grafanaEls.push(self.buildPanel(panel, grafanaDashboard.time));
+                grafanaEls.push(self.buildPanel(panel, grafanaDashboard.time, t.hits[0].id));
               }
             });
           });

@@ -28,8 +28,7 @@
   "scripts": {
     "test": "grunt test",
     "start": "node ./src/server/bin/kibana.js",
-    "server": "node ./src/server/bin/kibana.js",
-    "precommit": "grunt hintStagedFiles"
+    "server": "node ./src/server/bin/kibana.js"
   },
   "repository": {
     "type": "git",

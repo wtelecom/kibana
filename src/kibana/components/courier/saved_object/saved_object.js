@@ -1,5 +1,5 @@
 define(function (require) {
-  return function SavedObjectFactory(es, configFile, Promise, Private, Notifier, indexPatterns, $sce) {
+  return function SavedObjectFactory(es, configFile, Promise, Private, Notifier, indexPatterns, $sce, timefilter) {
     var angular = require('angular');
     var errors = require('errors');
     var _ = require('lodash');
@@ -48,11 +48,11 @@ define(function (require) {
 
       // the id of the document
       if (config.id && type == "visualization") {
-        if (config.id.split('-').length > 2) {
-          self.id = config.id.split('-')[0] + "-" + config.id.split('-')[1];
+        if (config.id.split('|').length > 1) {
+          self.id = config.id.split('|')[0];
           grafana.current = true;
-          grafana.title = config.id.split('-')[2]
-          grafana.url = $sce.trustAsResourceUrl("http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + config.id.split('-')[3] + "&fullscreen&from=" + config.id.split('-')[4] + "&to=" + config.id.split('-')[5]);
+          grafana.title = config.id.split('|')[1];
+          grafana.url = $sce.trustAsResourceUrl("http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + config.id.split('|')[2] + "&fullscreen&from=" + timefilter.from + "&to=" + timefilter.to);
         } else {
           self.id = config.id || void 0;
         }

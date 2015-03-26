@@ -40,7 +40,7 @@ function validate(req) {
   var maybeMsearch = ('_msearch' === maybeMethod && add && bulkBody);
 
   // indication that this request is against kibana
-  var maybeKibanaIndex = (maybeIndex === config.kibana.kibana_index);
+  var maybeKibanaIndex = (maybeIndex === config.kibana.kibana_index || maybeIndex === config.kibana.grafana_index);
 
   if (!maybeBulk) validateNonBulkDestructive();
   else validateBulkBody(bulkBody);
