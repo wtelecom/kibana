@@ -23,9 +23,9 @@ define(function (require) {
         });
 
         var dashboardData = JSON.parse(dash[0]._source.dashboard)
-        dashboardData.time.from = timefilter.from;
-        dashboardData.time.from = timefilter.to;
-
+        dashboardData.time.from = timefilter.time.from;
+        dashboardData.time.to = timefilter.time.to;
+        
         return es.update({
           index: 'grafana-dash',
           type: 'dashboard',
