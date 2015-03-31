@@ -23,6 +23,13 @@ define(function (require) {
         });
 
         var dashboardData = JSON.parse(dash[0]._source.dashboard)
+        
+        console.log("FROM:");
+        console.log(timefilter.time.from);
+
+        console.log("TO:");
+        console.log(timefilter.time.to);
+
         dashboardData.time.from = timefilter.time.from;
         dashboardData.time.to = timefilter.time.to;
         

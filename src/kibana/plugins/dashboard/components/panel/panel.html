@@ -13,15 +13,16 @@
     <span ng-bind="error"></span>
   </div>
 
-  <iframe ng-src="{{savedObj.url}}" ng-if="savedObj.url" style="width: 100%; height: 100%; border: 0;"></iframe>
-  
-  <visualize ng-if="!savedObj.url" ng-switch-when="visualization"
+  <!-- <iframe ng-if="savedObj.url" ng-src="{{savedObj.url}}" style="width: 100%; height: 100%; border: 0;"></iframe> -->
+  <!--  ng-if="!savedObj.url" -->
+  <visualize  ng-switch-when="visualization"
     vis="savedObj.vis"
+    url="savedObj.url"
     search-source="savedObj.searchSource"
     class="panel-content">
   </visualize>
 
-  <doc-table ng-switch-when="search"
+  <doc-table ng-if="!savedObj.url" ng-switch-when="search"
     search-source="savedObj.searchSource"
     sorting="savedObj.sort"
     columns="savedObj.columns"

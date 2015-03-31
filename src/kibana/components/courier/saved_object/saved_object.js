@@ -52,7 +52,7 @@ define(function (require) {
           self.id = config.id.split('|')[0];
           grafana.current = true;
           grafana.title = config.id.split('|')[1];
-          grafana.url = $sce.trustAsResourceUrl("http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + config.id.split('|')[2] + "&fullscreen&from=" + timefilter.from + "&to=" + timefilter.to);
+          grafana.url = $sce.trustAsResourceUrl("http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + config.id.split('|')[2] + "&fullscreen&from=" + timefilter.time.from + "&to=" + timefilter.time.to);
         } else {
           self.id = config.id || void 0;
         }
