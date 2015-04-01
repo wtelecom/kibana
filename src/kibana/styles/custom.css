@@ -1,0 +1,21 @@
+body.application-dashboard {
+  background-color: #fff !important;
+}
+.app-container > nav, .app-container > navbar {
+  display: none;	
+}
+.navbar-nav:first-child {
+  display: none;
+}
+#kibana-primary-navbar {
+  background-color: #FFF;
+}
+.navbar-timepicker {
+  background-color: #FFF;
+}
+.navbar-nav > li.navbar-timepicker-container > a {
+  color: #777
+}
+.gridster {
+  background-color: #FFF !important;
+}
