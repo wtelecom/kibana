@@ -52,7 +52,13 @@ define(function (require) {
           self.id = config.id.split('|')[0];
           grafana.current = true;
           grafana.title = config.id.split('|')[1];
-          grafana.url = $sce.trustAsResourceUrl("http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + config.id.split('|')[2] + "&fullscreen&from=" + timefilter.time.from + "&to=" + timefilter.time.to);
+
+          var from = new Date(timefilter.time.from).getTime();
+          var to = new Date(timefilter.time.to).getTime();
+          var fromUrl = isNaN(from) ? timefilter.time.from : from;
+          var toUrl = isNaN(to) ? timefilter.time.to : to;
+
+          grafana.url = $sce.trustAsResourceUrl("http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + config.id.split('|')[2] + "&fullscreen&from=" + fromUrl + "&to=" + toUrl);
         } else {
           self.id = config.id || void 0;
         }

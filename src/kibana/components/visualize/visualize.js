@@ -27,6 +27,9 @@ define(function (require) {
         var chart; // set in "vis" watcher
         var minVisChartHeight = 180;
 
+        $scope.iframeW = $el.width() - 8 + 'px';
+        $scope.iframeH = $el.height() - 8 + 'px';
+
         function getter(selector) {
           return function () {
             var $sel = $el.find(selector);

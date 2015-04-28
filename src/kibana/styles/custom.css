@@ -19,3 +19,9 @@ body.application-dashboard {
 .gridster {
   background-color: #FFF !important;
 }
+.vis-col-wrapper {
+	margin-right: 0 !important;
+}
+.vis-col-wrapper .chart.tilemap.leaflet-container {
+	margin-bottom: 0;
+}
