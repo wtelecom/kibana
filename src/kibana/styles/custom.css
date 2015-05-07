@@ -25,3 +25,7 @@ body.application-dashboard {
 .vis-col-wrapper .chart.tilemap.leaflet-container {
 	margin-bottom: 0;
 }
+
+.panel > .panel-heading > .btn-group {
+	display: none;
+}
