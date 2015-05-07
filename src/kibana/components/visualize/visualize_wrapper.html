@@ -1,7 +1,7 @@
 <div ng-if="url">
   <iframe ng-src="{{url}}" style="height: {{iframeH}}; width: {{iframeW}}; border: 0;"></iframe>
 </div> 
-<div ng-if="vis.type.requiresSearch && esResp.hits.total === 0"
+<div ng-if="vis.type.requiresSearch && esResp.hits.total === 0 && !url" 
   class="text-center visualize-error visualize-chart">
   <div class="item top"></div>
   <div class="item">
