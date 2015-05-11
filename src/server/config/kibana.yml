@@ -50,7 +50,10 @@ verify_ssl: true
 # pid_file: /var/run/kibana.pid
 
 # The Grafana instance to use for all your graphs.
-grafana_url: "http://89.140.11.71:8088/#/dashboard/db/grafana?"
+grafana_url: "http://89.140.11.71:8088"
+
+# The grafana dashboard name.
+grafana_dashboard: "grafana"
 
 # Grafana index
 grafana_index: "grafana-dash"

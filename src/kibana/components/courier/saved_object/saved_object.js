@@ -57,8 +57,7 @@ define(function (require) {
           var to = new Date(timefilter.time.to).getTime();
           var fromUrl = isNaN(from) ? timefilter.time.from : from;
           var toUrl = isNaN(to) ? timefilter.time.to : to;
-
-          grafana.url = $sce.trustAsResourceUrl("http://89.140.11.71:8088/#/dashboard/db/grafana?" + "panelId=" + config.id.split('|')[2] + "&fullscreen&from=" + fromUrl + "&to=" + toUrl);
+          grafana.url = $sce.trustAsResourceUrl(configFile.grafana_url + '/#/dashboard/db/' + configFile.grafana_dashboard + "?panelId=" + config.id.split('|')[2] + "&fullscreen&from=" + fromUrl + "&to=" + toUrl);
         } else {
           self.id = config.id || void 0;
         }

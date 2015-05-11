@@ -7,7 +7,10 @@ router.get('/config', function (req, res, next) {
   var keys = [
     'kibana_index',
     'default_app_id',
-    'shard_timeout'
+    'shard_timeout',
+    'grafana_url',
+    'grafana_dashboard',
+    'grafana_index'
   ];
   var data = _.pick(config.kibana, keys);
   data.plugins = config.plugins;

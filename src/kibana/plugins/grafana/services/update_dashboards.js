@@ -2,41 +2,34 @@ define(function (require) {
   var module = require('modules').get('app/dashboard');
   var _ = require('lodash');
 
-  module.service('updateDashboards', function (config, es, $window) {
+  module.service('updateDashboards', function (config, es, $window, configFile) {
 
     this.find = function (timefilter) {
       var self = this;
       var body = { query: {match_all: {}}};
       return es.search({
-        index: 'grafana-dash',
+        index: configFile.grafana_index,
         type: 'dashboard',
         body: body,
         size: 100
       })
       .then(function (resp) {
         var dash = _.filter(resp.hits.hits, function(grafanaEl) {
-          // TODO: Set this elements in a proper way in the config file
-          if (grafanaEl._index == "grafana-dash" && grafanaEl._type == "dashboard" && grafanaEl._id == "grafana") {
+          if (grafanaEl._index == configFile.grafana_index && grafanaEl._type == "dashboard" && grafanaEl._id == configFile.grafana_dashboard) {
             return true;
           }
           return false;  
         });
 
         var dashboardData = JSON.parse(dash[0]._source.dashboard)
-        
-        console.log("FROM:");
-        console.log(timefilter.time.from);
-
-        console.log("TO:");
-        console.log(timefilter.time.to);
 
         dashboardData.time.from = timefilter.time.from;
         dashboardData.time.to = timefilter.time.to;
         
         return es.update({
-          index: 'grafana-dash',
+          index: configFile.grafana_index,
           type: 'dashboard',
-          id: 'grafana',
+          id: configFile.grafana_dashboard,
           body: {
             doc: {
               dashboard: JSON.stringify(dashboardData)
