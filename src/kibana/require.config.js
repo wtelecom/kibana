@@ -15,6 +15,7 @@ require.config({
     'angular-route': 'bower_components/angular-route/angular-route',
     'angular-ui-ace': 'bower_components/angular-ui-ace/ui-ace',
     ace: 'bower_components/ace-builds/src-noconflict/ace',
+    'ace-json': 'bower_components/ace-builds/src-noconflict/mode-json',
     angular: 'bower_components/angular/angular',
     async: 'bower_components/async/lib/async',
     bower_components: 'bower_components',
@@ -24,9 +25,11 @@ require.config({
     faker: 'bower_components/Faker/faker',
     file_saver: 'bower_components/FileSaver/FileSaver',
     gridster: 'bower_components/gridster/dist/jquery.gridster',
+    'leaflet-heat': 'bower_components/Leaflet.heat/dist/leaflet-heat',
     inflection: 'bower_components/inflection/lib/inflection',
     jquery: 'bower_components/jquery/dist/jquery',
     leaflet: 'bower_components/leaflet/dist/leaflet',
+    'leaflet-draw': 'bower_components/leaflet-draw/dist/leaflet.draw',
     lodash_src: 'bower_components/lodash/dist/lodash',
     'lodash-deep': 'bower_components/lodash-deep/factory',
     moment: 'bower_components/moment/moment',
@@ -46,13 +49,20 @@ require.config({
     'elasticsearch': ['angular'],
     'angular-bootstrap': ['angular'],
     'angular-bindonce': ['angular'],
-    'angular-ui-ace': ['angular', 'ace'],
+    'ace-json': ['ace'],
+    'angular-ui-ace': ['angular', 'ace', 'ace-json'],
     'ng-clip': ['angular', 'zeroclipboard'],
+    'leaflet-heat': {
+      deps: ['leaflet']
+    },
     inflection: {
       exports: 'inflection'
     },
     file_saver: {
       exports: 'saveAs'
+    },
+    'leaflet-draw': {
+      deps: ['leaflet', 'css!bower_components/leaflet-draw/dist/leaflet.draw.css']
     },
     leaflet: {
       deps: ['css!bower_components/leaflet/dist/leaflet.css']

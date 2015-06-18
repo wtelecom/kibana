@@ -16,13 +16,12 @@ define(function (require) {
     return {
       restrict: 'E',
       scope : {
-        url: '=',
         vis: '=',
         editableVis: '=?',
         esResp: '=?',
         searchSource: '=?'
       },
-      template: require('text!components/visualize/visualize_wrapper.html'),
+      template: require('text!components/visualize/visualize.html'),
       link: function ($scope, $el, attr) {
         var chart; // set in "vis" watcher
         var minVisChartHeight = 180;

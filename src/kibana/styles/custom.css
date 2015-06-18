@@ -2,7 +2,7 @@ body.application-dashboard {
   background-color: #fff !important;
 }
 .app-container > nav, .app-container > navbar {
-  display: none;	
+  display: none;    
 }
 .navbar-nav:first-child {
   display: none;
@@ -18,4 +18,14 @@ body.application-dashboard {
 }
 .gridster {
   background-color: #FFF !important;
+}
+.vis-col-wrapper {
+    margin-right: 0 !important;
+}
+.vis-col-wrapper .chart.tilemap.leaflet-container {
+    margin-bottom: 0;
+}
+
+.panel > .panel-heading > .btn-group {
+    display: none;
 }

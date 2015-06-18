@@ -14,17 +14,18 @@ define(function (require) {
   app.service('savedVisualizations', function (Promise, es, config, SavedVis, Private, Notifier, kbnUrl) {
     var visTypes = Private(require('registry/vis_types'));
     var notify = new Notifier({
-      location: 'saved visualization service'
+      location: 'Saved Visualization Service'
     });
 
     this.type = SavedVis.type;
+    this.Class = SavedVis;
 
     this.get = function (id) {
       return (new SavedVis(id)).init();
     };
 
     this.urlFor = function (id) {
-      return kbnUrl.eval('#/visualize/editdsds/{{id}}', {id: id});
+      return kbnUrl.eval('#/visualize/edit/{{id}}', {id: id});
     };
 
     this.delete = function (ids) {
@@ -34,28 +35,11 @@ define(function (require) {
       });
     };
 
-    this.buildPanel = function (data, time, sample) {
-      panel = {};
-      panel.description = "";
-      panel.icon = "fa-plug";
-      panel.id = sample + "|" + data.title + "|"+ data.id;
-      panel.savedSearchId= "grafana";
-      panel.title = data.title;
-      panel.type = { 
-        description: "Grafana export",
-        hierarchicalData: false,
-        icon: "fa-plug",
-        name: "area",
-        title: "Chart",
-        version: 1,
-        visState: '{}'
-      };
-      return panel;
-    };
-
     this.find = function (searchString) {
       var self = this;
-      var body = searchString ? {
+      var body;
+      if (searchString) {
+        body = {
           query: {
             simple_query_string: {
               query: searchString + '*',
@@ -63,7 +47,11 @@ define(function (require) {
               default_operator: 'AND'
             }
           }
-        }: { query: {match_all: {}}};
+        };
+      } else {
+        body = { query: {match_all: {}}};
+      }
+
       return es.search({
         index: config.file.kibana_index,
         type: 'visualization',
@@ -71,9 +59,9 @@ define(function (require) {
         size: 100,
       })
       .then(function (resp) {
-        var t = {};
-        t.total = resp.hits.total;
-        t.hits = _.transform(resp.hits.hits, function (hits, hit) {
+        return {
+          total: resp.hits.total,
+          hits: _.transform(resp.hits.hits, function (hits, hit) {
             var source = hit._source;
             source.id = hit._id;
             source.url = self.urlFor(hit._id);
@@ -85,39 +73,16 @@ define(function (require) {
             }
 
             if (!typeName || !visTypes.byName[typeName]) {
-              notify.info('unable to detect type from visualization source', hit);
-              return;
+              if (!typeName) notify.error('Visualization type is missing. Please add a type to this visualization.', hit);
+              else notify.error('Visualization type of "' + typeName + '" is invalid. Please change to a valid type.', hit);
+              return kbnUrl.redirect('/settings/objects/savedVisualizations/{{id}}', {id: source.id});
             }
 
             source.type = visTypes.byName[typeName];
             source.icon = source.type.icon;
-            source.type.description ="po cmeme";
             hits.push(source);
-        }, []);
-        
-        var grafanaEls = [];
-
-        es.search({
-          index: "grafana-dash",
-          type: "dashboard",
-          body: body,
-          size: 100,
-        })
-        .then(function (resp) {
-          var grafanaDashboard = JSON.parse(resp.hits.hits[0]._source.dashboard);
-          _.forEach(grafanaDashboard.rows, function(row) {
-            _.forEach(row.panels, function(panel) {
-              if (panel.title) {
-                grafanaEls.push(self.buildPanel(panel, grafanaDashboard.time, t.hits[0].id));
-              }
-            });
-          });
-          t.total += grafanaEls.length;
-          _.forEach(grafanaEls, function(gPanel) {
-            t.hits.push(gPanel);
-          });
-        });
-        return t;
+          }, [])
+        };
       });
     };
   });

@@ -1,7 +1,7 @@
 define(function (require) {
   return function AggConfigFactory(Private, fieldTypeFilter) {
     var _ = require('lodash');
-    var fieldFormats = Private(require('components/index_patterns/_field_formats'));
+    var fieldFormats = Private(require('registry/field_formats'));
 
     function AggConfig(vis, opts) {
       var self = this;
@@ -182,7 +182,7 @@ define(function (require) {
      */
     AggConfig.prototype.requesting = function () {
       var self = this;
-      self.type.params.forEach(function (param) {
+      self.type && self.type.params.forEach(function (param) {
         if (param.onRequest) param.onRequest(self);
       });
     };
@@ -254,6 +254,10 @@ define(function (require) {
       return this.type.getValue(this, bucket);
     };
 
+    AggConfig.prototype.getKey = function (bucket, key) {
+      return this.type.getKey(bucket, key, this);
+    };
+
     AggConfig.prototype.makeLabel = function () {
       if (!this.type) return '';
       return this.type.makeLabel(this);
@@ -263,13 +267,16 @@ define(function (require) {
       return this.params.field;
     };
 
-    AggConfig.prototype.fieldFormatter = function () {
-      if (this.schema && this.schema.group === 'metrics') {
-        return fieldFormats.defaultByType.number.convert;
+    AggConfig.prototype.fieldFormatter = function (contentType) {
+      var field = this.field();
+      var format = field && field.format;
+      var strFormat = fieldFormats.getDefaultInstance('string');
+
+      if (this.type) {
+        format = this.type.getFormat(this) || format;
       }
 
-      var field = this.field();
-      return field ? field.format.convert : String;
+      return (format || strFormat).getConverterFor(contentType);
     };
 
     AggConfig.prototype.fieldName = function () {
